@@ -10,6 +10,7 @@ const port = process.env.PORT || "8000";
 const router = express.Router();
 
 app.use(cors());
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -17,6 +18,7 @@ app.set("view engine", "ejs");
 
 app.get('/authorize',homeController.getAuthorize);
 app.get('/unsub',homeController.getUnsubscribe);
+app.post('/updatePost',homeController.updatePost);
 app.use((error,req,res,next)=>{
   const status =error.statusCode||500; 
   const message =error.message; 
