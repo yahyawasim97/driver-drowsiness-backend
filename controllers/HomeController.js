@@ -18,7 +18,7 @@ exports.getUnsubscribe=async (req, res, next)=>{
     let sessionData = cortex.getSessionData();
     console.log(sessionData)
     SessionData.create({data:{blinks:sessionData.sessionBlinkData,name,sessionBandsData:sessionData.sessionBandsData}}, function (err, results) {
-        res.send({id: results._id,minutes:sessionData.length});
+        res.send({id: results._id,minutes:sessionData.sessionBlinkData.length});
     });
 }
 
@@ -40,7 +40,8 @@ exports.updatePost = async(req,res,next)=>{
     let drowsyAlpha =0;
     let drowsyBeta =0;
     let drowsyTheta =0;
-
+    let drowsyBandCount =0;
+    let alertBandCount =0;
     sessionUserData.blinks.forEach((d,index)=>{
         if(index+1 >= min && index+1<=max){
             drowsyBlink = drowsyBlink + d.count
@@ -53,28 +54,37 @@ exports.updatePost = async(req,res,next)=>{
             }
         })
         sessionUserData.sessionBandsData.forEach((d,index)=>{
-            if(index+1 >= min && index+1<=max){
+            if(index*5+1 >= min && index*5+1<=max){
                 drowsyAlpha = drowsyAlpha + d.alpha;
                 drowsyBeta = drowsyBeta + d.beta;
                 drowsyTheta = drowsyTheta + d.theta;
+                drowsyBandCount++;
             }else{
                 alertAlpha = alertAlpha + d.alpha;
                 alertBeta = alertBeta + d.beta;
                 alertTheta = alertTheta + d.theta;
+                alertBandCount++;
             }
         })
 
-    
-        alertBlink = Math.round(alertBlink/alertCount);
-        alertDuration = Math.round(alertDuration/alertCount);
-        alertAlpha =alertAlpha/sessionUserData.sessionBandsData.length;
-        alertBeta = alertBeta/sessionUserData.sessionBandsData.length;
-        alertTheta = alertTheta/sessionUserData.sessionBandsData.length;
-        drowsyBlink = Math.round(drowsyBlink/drowsyCount);
-        drowsyDuration = Math.round(drowsyDuration/drowsyCount);
-        drowsyAlpha = drowsyAlpha/sessionUserData.sessionBandsData.length;
-        drowsyBeta = drowsyBeta/sessionUserData.sessionBandsData.length;
-        drowsyTheta =drowsyTheta/sessionUserData.sessionBandsData.length;
+        if(alertCount>0){
+            alertBlink = Math.round(alertBlink/alertCount);
+            alertDuration = Math.round(alertDuration/alertCount);
+        }
+        if(alertBandCount>0){
+            alertAlpha =alertAlpha/alertBandCount;
+            alertBeta = alertBeta/alertBandCount;
+            alertTheta = alertTheta/alertBandCount;
+        }
+        if(drowsyCount>0){   
+            drowsyBlink = Math.round(drowsyBlink/drowsyCount);
+            drowsyDuration = Math.round(drowsyDuration/drowsyCount);   
+        }
+        if(drowsyBandCount>0){    
+            drowsyAlpha = drowsyAlpha/drowsyBandCount;
+            drowsyBeta = drowsyBeta/drowsyBandCount;
+            drowsyTheta =drowsyTheta/drowsyBandCount;
+        }
         await SessionMean.create({meanAlertBlinks:alertBlink,meanAlertDuration:alertDuration,meanDrowsyBlinks:drowsyBlink,meanDrowsyDuration:drowsyDuration,drowsyAlpha,drowsyBeta,drowsyTheta,alertAlpha,alertBeta,alertTheta});
         refreshMean();
     
@@ -147,7 +157,8 @@ refreshMean=async()=>{
 exports.getAuthorize = async (req, res, next) => {
     cortex = new Cortex(user, socketUrl);
     await cortex.sub(['fac','pow' ]);
-    res.status(200).json({title:'Data Fetching start'});
+    let means = await OverallMean.findOne({}, {}, { sort: { 'created_at' : -1 } }).exec();
+    res.status(200).json({title:'Data Fetching start',means});
 //     let c = new Cortex(user, socketUrl);
     
 // // ---------- sub data stream

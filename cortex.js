@@ -17,8 +17,9 @@ class Cortex {
         this.socket = new WebSocket(socketUrl)
 
         // read user infor
-        this.user = user
+        this.user = user;
     }
+
 
     queryHeadsetId(){
         const QUERY_HEADSET_ID = 2
@@ -318,7 +319,7 @@ class Cortex {
     subRequest(stream, authToken, sessionId){
         let socket = this.socket
         
-        let endTime = moment().add(10,'seconds').format("HH:mm:ss");
+        let endTime = moment().add(2,'seconds').format("HH:mm:ss");
         const SUB_REQUEST_ID = 6 
         let subRequest = { 
             "jsonrpc": "2.0", 
@@ -333,7 +334,6 @@ class Cortex {
         // console.log('sub eeg request: ', subRequest)
         socket.send(JSON.stringify(subRequest))
         let allArray=[];
-        let time =0;
         socket.on('message', (data)=>{
             let alpha;
             let beta;
@@ -342,12 +342,12 @@ class Cortex {
             try {
                 let parsedData = JSON.parse(data);
                 if(parsedData.pow){
-                    alpha =     parsedData.pow[61];
+                    alpha = parsedData.pow[61];
                     beta = (parsedData.pow[62]+parsedData.pow[63])/2;
                     gamma=parsedData.pow[64];
                     theta=(parsedData.pow[60]);
                     allArray.push({ alpha,beta,theta,gamma });
-
+                    
                     if(moment().format("HH:mm:ss")===endTime)   { 
                         // console.log('here')
                         let meanAlpha=0
@@ -462,7 +462,7 @@ class Cortex {
                         count,
                         blinkDuration:meanBlinkDuration
                     });
-                    io.getIO().emit('blinkData',count,meanBlinkDuration);
+                    io.getIO().emit('blinkData',{count,meanBlinkDuration});
                     count =0;
                     blinkDuration=[];
                     endTime = moment(endTime,"HH:mm:ss").add(10,'seconds').format("HH:mm:ss");
@@ -482,6 +482,7 @@ class Cortex {
                                 count++;
                                 blinkDuration.push(duration);
                                 console.log('blink End',duration);
+                                io.getIO().emit('blink',{duration});
                             }
                             prev=null;
                         }
