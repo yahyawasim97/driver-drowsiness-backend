@@ -1,16 +1,8 @@
 const mongoose =require('mongoose');
 const {Schema} = require('mongoose');
 const OverallMeanModel = mongoose.model('overall_mean', new Schema({ 
-    meanAlertBlinks: Number, 
-    meanAlertDuration: Number, 
-    meanAlertAlpha: Number,
-    meanAlertBeta: Number,
-    meanAlertTheta: Number,
-    meanDrowsyBlinks:Number,
-    meanDrowsyDuration: Number,
-    meanDrowsyAlpha: Number,
-    meanDrowsyBeta:Number,
-    meanDrowsyTheta:Number 
+    alert:Object,
+    drowsy:Object
     },{
     timestamps: true
 }));

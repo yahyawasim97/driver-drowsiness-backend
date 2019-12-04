@@ -8,6 +8,7 @@
     "cors": "^2.8.5",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
+    "ml-knn": "^3.0.0",
     "moment": "^2.24.0",
     "mongoose": "^5.7.11",
     "react-charts": "^2.0.0-beta.4",

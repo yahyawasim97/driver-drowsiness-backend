@@ -346,7 +346,10 @@ class Cortex {
                     beta = (parsedData.pow[62]+parsedData.pow[63])/2;
                     gamma=parsedData.pow[64];
                     theta=(parsedData.pow[60]);
-                    allArray.push({ alpha,beta,theta,gamma });
+                    console.log(alpha,beta,theta)
+                    if(alpha > 0 && alpha<12 && beta>0 && beta<30 && theta >0 && theta <7 ){
+                        allArray.push({ alpha,beta,theta,gamma });
+                    } 
                     
                     if(moment().format("HH:mm:ss")===endTime)   { 
                         // console.log('here')
@@ -354,7 +357,7 @@ class Cortex {
                         let meanBeta=0
                         let meanTheta=0
                         let meanGamma=0
-                        // console.log(allArray)
+                        console.log(allArray)
                     allArray.forEach((value)=>{
                         // console.log(value)
                         meanTheta=meanTheta+value.theta
@@ -368,10 +371,12 @@ class Cortex {
                     meanGamma=meanGamma/allArray.length;
                     meanTheta=meanTheta/allArray.length;
                     // console.log({alpha:meanAlpha,beta:meanBeta,gamma:meanGamma,theta:meanTheta})
-                    io.getIO().emit('powData',{alpha:meanAlpha,beta:meanBeta,gamma:meanGamma,theta:meanTheta});
-                    sessionBandsData.push({
-                        alpha:meanAlpha,beta:meanBeta,gamma:meanGamma,theta:meanTheta
-                    })
+                    if(meanAlpha && meanBeta && meanTheta){
+                        io.getIO().emit('powData',{alpha:meanAlpha,beta:meanBeta,gamma:meanGamma,theta:meanTheta});
+                        sessionBandsData.push({
+                            alpha:meanAlpha,beta:meanBeta,gamma:meanGamma,theta:meanTheta
+                        })
+                    }
                     endTime = moment(endTime,"HH:mm:ss").add(10,'seconds').format("HH:mm:ss");
                     allArray=[]
                     }
