@@ -1,154 +1,34 @@
-# Nodejs cortex code example
-This guide explain how to use Emotiv cortex api and explain node js example code.
+# Driver Drowsiness Introduction 
 
-## Installation
-* [Install Nodejs](https://nodejs.org/en/)
+An Exclusive, EEG based Driver Drowsiness Detection system submitted as a Final Year Project to Bahria University.
 
-* [Install EmotivApps](https://emotiv.com)
+## Getting Started
 
-* Install ws package with npm ```npm install ws```
+To get started developing right away:
 
-## Prepare
-### Create emotiv id
-Go to [emotiv website](https://emotiv.com) for create new emotivid
+1. Clone the application:
+`$ https://github.com/yahyawasim97/driver-drowsiness-backend`
 
-### License
-Login to [emotiv website](https://emotiv.com) with above emotiv id then buy a license for coding third party app.
+2. Start the application:
+`node index.js`
 
-### Create client id and client secret
-Go to [emotiv website](https://emotiv.com) to create a new pair of client id and client secret for your app.
+## Functionality
 
+This project is used to detect driver drowsiness by analyzing EEG(electroencephalogram) signals of the driver. It is based on MERN stack and uses the principals of Artificial Intelligence to produce more accurate results. The quality of this system is that is not affected by Environmental Factors
 
-## Cortex class explained
-Cortex is class wrap around Emotiv cortex service api. In this class not yet contain all api function but essential functions for user could subcribe data stream from headset and doing mental command.
+## Key Features
 
-```async / await``` and ```Promise``` is used for function that need to run in sync mode.
+1. Single Sensor Base
 
-### Check login and access request
-Check user login status and access request are handled with function ```checkGrantAccessAndQuerySessionInfo```
-Incase user not yet login or access request not yet granted, message will show up.
+Uses the AF3 sensor which allows this project to move its span for the 14 channel EEG device to a single Ear-based or Glasses-Based EEG device.
 
-```javascript
-/**
-* - check if user logined
-* - check if app is granted for access
-* - query session info to prepare for sub and train
-*/
-async checkGrantAccessAndQuerySessionInfo(){
-}
-```
+2. Accurate
 
-### Get session info
-Session info is handled with function
-```javascript
-/**
-* - query headset infor
-* - connect to headset
-* - authentication and get back auth token
-* - create session and get back session id
-*/
-async querySessionInfo(){
-}
-```
+Among every other framework (Computer Vision, etc.) EEG is considered as the safest idea or approach to determine the sleepiness of drivers which is not affected by external factors, resulting in more accurate results.
 
-### Subcribe data stream
-Have 6 kind of data streams ('fac', 'pow', 'eeg', 'mot', 'met', 'com'). Subcribe data streams is handled by function ```sub```. Each time call user could sub one or many difference stream.
-```javascript
-/**
- * 
- * - check login and grant access
- * - subcribe for stream
- * - logout data stream to console or file
- */
- sub(streams){}
-```
+3. Absolutely Free
 
-### Training profile
-Training mental command for specific profile is handled with function ```train```.
-Each time call function will train list of command, number of repeat train is free to specify but it is recommended to train atlease 5 times for each command.
+This project is based on open-source framework and technologies, easing with the flexibility to use the project or you can even contribute to enchance the performance and accuracy.
 
-```javascript
-/**
-* - check login and grant access
-* - create profile if not yet exist
-* - load profile
-* - sub stream 'sys' for training
-* - train for actions, each action in number of time
-* 
-*/
-train(profileName, trainingActions, numberOfTrain){
-}
-```
-
-
-### Live mode
-After traing mental command successfully, user could test that command again in live mode with function ```live```.
-```javascript
-/**
- * 
- * - load profile which trained before
- * - sub 'com' stream (mental command)
- * - user think specific thing which used while training, for example 'push' action
- * - 'push' command should show up on mental command stream
- */
-live(profileName) {
-}
-```
-
-## How to use Cortex class
-
-### Create cortex instance
-To initialize a Cortex instance, you will need websocket url where cortex service running and information related to specific user : license, client id, client secret.
-
-```javascript
-// use local cortex service
-// put your license, client id, client secret to user object
-let socketUrl = 'wss://localhost:6868'
-let user = {
-    "license":"your license in prepare step above",
-    "clientId":"your client id in prepare step above",
-    "clientSecret":"your client secret in prepare step above",
-    "debit":5000
-}
-
-let c = new Cortex(user, socketUrl)
-```
-
-### Subscribe data stream
-```javascript
-// subcribe headset data stream
-// user could sub one or many stream at once
-// streams = ['fac', 'pow', 'eeg', 'mot', 'met', 'com']
-let streams = ['eeg']
-c.sub(streams)
-```
-
-### Training mental command and live mode
-User need to train 'neutral' first. Then train for wanted action, for example 'push' action.
-```javascript
-// train is do with a specific profile
-// if profile not yet exist, it will be created
-let profileName = 'test'
-// number of repeat train for each action
-// user have 8 seconds for each time of training
-let numberOfTrain = 5
-// always train 'neutral' first then train other action
-let trainingActions = ['neutral', 'push']
-// c.train(profileName, trainingActions, numberOfTrain)
-```
-
-Finally test mental command in live mode with profile already trained
-``` javascript
-// load profile which already trained then test your mental command
-c.live(profileName)
-```
-
-### Running steps
-
-* Start CortexUI
-* Login on CortexUI with emotivid and password manually
-* Connect headset with pc or mac
-* Wear headset and make sure have a good contact quality, contact quality could be viewed visually on CortexUI
-* Run example first time to request access ```node cortex_code_example.js```
-* Approve access on CortexUI manually (Action of approve need to do only onece)
-* Rerun example to sub data or training
+## Contributing
+The main purpose of this repository is to provide some contribution in Brain Computing.
